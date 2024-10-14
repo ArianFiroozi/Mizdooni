@@ -6,22 +6,35 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.Arrays;
 
 public class UserTest {
     private User client;
     private Restaurant restaurant;
-    private Table table;
+    private List<Reservation> validReservations, invalidReservations;
 
     @BeforeEach
     void setup() {
         Address address = new Address("Iran", "Tehran", "Khoone Ali");
         client=new User("ali", "ali1122", "ali@ali.com", address, User.Role.client);
-
         User manager = new User("akbar", "akbar1234", "akbar@akbar.com", address, User.Role.manager);
         restaurant=new Restaurant("akbar juje", manager, "kababi", LocalTime.now().minusHours(2),
-                LocalTime.now().plusHours(2), "khoobe", address, "akbar-juje.png");
-        table=new Table(1, restaurant.getId(), 4);
+                                    LocalTime.now().plusHours(2), "khoobe", address, "akbar-juje.png");
+
+        Table table = new Table(1, restaurant.getId(), 4);
         restaurant.addTable(table);
+
+        validReservations=Arrays.asList(
+                        new Reservation(client, restaurant, table, LocalDateTime.now().minusHours(1)),
+                        new Reservation(client, restaurant, table, LocalDateTime.now().minusHours(3)),
+                        new Reservation(client, restaurant, table, LocalDateTime.now().minusHours(4))
+                        );
+        invalidReservations=Arrays.asList(
+                        new Reservation(client, restaurant, table, LocalDateTime.now().plusHours(1)),
+                        new Reservation(client, restaurant, table, LocalDateTime.now().plusHours(19))
+                        );
     }
 
     @Test
@@ -32,42 +45,35 @@ public class UserTest {
 
     @Test
     public void userCanCheckReserveValid() {
-        Reservation res1=new Reservation(client, restaurant, table, LocalDateTime.now().minusHours(1));
-        client.addReservation(res1);
+        client.addReservation(validReservations.getFirst());
 
         Assertions.assertTrue(client.checkReserved(restaurant));
     }
 
     @Test
     public void userCanNotCheckReserveInFuture() {
-        Reservation res1=new Reservation(client, restaurant, table, LocalDateTime.now().plusHours(1));
-        client.addReservation(res1);
+        client.addReservation(invalidReservations.getFirst());
 
         Assertions.assertFalse(client.checkReserved(restaurant));
     }
 
     @Test
     public void userCanNotCheckCancelledReserve() {
-        Reservation res1=new Reservation(client, restaurant, table, LocalDateTime.now().minusHours(1));
-        client.addReservation(res1);
-        res1.cancel();
+        client.addReservation(validReservations.getFirst());
+        validReservations.getFirst().cancel();
 
         Assertions.assertFalse(client.checkReserved(restaurant));
     }
 
     @Test
     public void userCanOnlyGetValidReserve() {
-        Reservation res1=new Reservation(client, restaurant, table, LocalDateTime.now().minusHours(1));
-        Reservation res2=new Reservation(client, restaurant, table, LocalDateTime.now().minusHours(3));
-        Reservation res3=new Reservation(client, restaurant, table, LocalDateTime.now().minusHours(4));
-        Reservation res4=new Reservation(client, restaurant, table, LocalDateTime.now().plusHours(1));
-        client.addReservation(res1);
-        client.addReservation(res2);
-        client.addReservation(res3);
-        client.addReservation(res4);
-        res1.cancel();
+        for (Reservation res : validReservations)
+            client.addReservation(res);
+        for (Reservation res : invalidReservations)
+            client.addReservation(res);
+        validReservations.getFirst().cancel();
 
-        Assertions.assertNull(client.getReservation(res1.getReservationNumber()));
-        Assertions.assertNotNull(client.getReservation(res2.getReservationNumber()));
+        Assertions.assertNull(client.getReservation(validReservations.getFirst().getReservationNumber()));
+        Assertions.assertNotNull(client.getReservation(validReservations.getLast().getReservationNumber()));
     }
 }
