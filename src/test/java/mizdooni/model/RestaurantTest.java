@@ -1,8 +1,11 @@
 package mizdooni.model;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -60,11 +63,13 @@ public class RestaurantTest {
         Assertions.assertTrue(restaurant.getTables().contains(tables.getLast()));
     }
 
-    @Test
-    void getTable_ValidTableNumber_ReturnsCorrectTable() {
+    @ParameterizedTest
+    @ValueSource(ints={1, 2, 4})
+    void getTable_ValidTableNumber_ReturnsCorrectTable(int tableNumber) {
+        Assumptions.assumeTrue(tableNumber<=tables.size());
         for (Table table:tables)
             restaurant.addTable(table);
-        Assertions.assertEquals(tables.get(2), restaurant.getTable(3));
+        Assertions.assertEquals(tables.get(tableNumber-1), restaurant.getTable(tableNumber));
     }
 
     @Test

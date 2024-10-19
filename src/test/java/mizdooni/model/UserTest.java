@@ -11,16 +11,19 @@ import java.util.Arrays;
 
 public class UserTest {
     private User client;
-    private Restaurant restaurant;
+    private Restaurant restaurant, wrongRestaurant;
     private List<Reservation> validReservations, invalidReservations;
 
     @BeforeEach
     void setup() {
         Address address = new Address("Iran", "Tehran", "Khoone Ali");
-        client=new User("ali", "ali1122", "ali@ali.com", address, User.Role.client);
+        client = new User("ali", "ali1122", "ali@ali.com", address, User.Role.client);
         User manager = new User("akbar", "akbar1234", "akbar@akbar.com", address, User.Role.manager);
-        restaurant=new Restaurant("akbar juje", manager, "kababi", LocalTime.now().minusHours(2),
+        restaurant = new Restaurant("akbar juje", manager, "kababi", LocalTime.now().minusHours(2),
                                     LocalTime.now().plusHours(2), "khoobe", address, "akbar-juje.png");
+
+        wrongRestaurant = new Restaurant("asghar juje", manager, "kababi", LocalTime.now().minusHours(2),
+                LocalTime.now().plusHours(2), "khoob nist", address, "asghar-juje.png");
 
         Table table = new Table(1, restaurant.getId(), 4);
         restaurant.addTable(table);
@@ -37,27 +40,38 @@ public class UserTest {
     }
 
     @Test
-    public void checkPassword_ValidPassword_OnlyVerifiesCorrectPassword() {
+    public void checkPassword_CorrectPassword_ReturnsTrue() {
         Assertions.assertTrue(client.checkPassword("ali1122"));
+    }
+
+    @Test
+    public void checkPassword_WrongPassword_ReturnsFalse() {
         Assertions.assertFalse(client.checkPassword("ali112"));
     }
 
     @Test
-    public void checkReserved_ValidReservation_returnsTrue() {
+    public void checkReserved_ValidReservation_ReturnsTrue() {
         client.addReservation(validReservations.getFirst());
 
         Assertions.assertTrue(client.checkReserved(restaurant));
     }
 
     @Test
-    public void checkReserved_ReservationInFuture_returnsFalse() {
+    public void checkReserved_WrongRestaurant_ReturnsFalse() {
+        client.addReservation(validReservations.getFirst());
+
+        Assertions.assertFalse(client.checkReserved(wrongRestaurant));
+    }
+
+    @Test
+    public void checkReserved_ReservationInFuture_ReturnsFalse() {
         client.addReservation(invalidReservations.getFirst());
 
         Assertions.assertFalse(client.checkReserved(restaurant));
     }
 
     @Test
-    public void checkReserved_CancelledReservation_returnsFalse() {
+    public void checkReserved_CancelledReservation_ReturnsFalse() {
         client.addReservation(validReservations.getFirst());
         validReservations.getFirst().cancel();
 

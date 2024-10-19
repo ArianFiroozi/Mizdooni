@@ -24,6 +24,13 @@ public class TableTest {
     }
 
     @Test
+    void addReservation_ValidReservation_Correct() {
+        Reservation reservation = new Reservation(client, restaurant, table, LocalDateTime.now().plusHours(2));
+        table.addReservation(reservation);
+        Assertions.assertTrue(table.getReservations().contains(reservation));
+    }
+
+    @Test
     void isReserved_ValidReservations_ReturnsCorrect() {
         table.addReservation(new Reservation(client, restaurant, table, LocalDateTime.now().plusHours(2)));
 
@@ -33,11 +40,10 @@ public class TableTest {
 
     @Test
     void isReserved_CancelledReservation_ReturnsFalse() {
-        Reservation reservation=new Reservation(client, restaurant, table, LocalDateTime.now().plusHours(2));
+        Reservation reservation = new Reservation(client, restaurant, table, LocalDateTime.now().plusHours(2));
         table.addReservation(reservation);
         reservation.cancel();
 
         Assertions.assertFalse(table.isReserved(LocalDateTime.now().plusHours(2)));
     }
-    // TODO: multiple reservations in the same time
 }
