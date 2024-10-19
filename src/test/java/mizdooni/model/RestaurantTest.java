@@ -12,7 +12,6 @@ import java.util.List;
 public class RestaurantTest {
     private List<Table> tables;
     private Restaurant restaurant;
-    private List<User> users;
     private List<Review> reviews;
 
     @BeforeEach
@@ -24,11 +23,11 @@ public class RestaurantTest {
                 );
 
         Address address = new Address("Iran", "Tehran", "Khoone Ali");
-        users=Arrays.asList(
+        List<User> users = Arrays.asList(
                 new User("ali", "ali1122", "ali@ali.com", address, User.Role.client),
                 new User("maryam", "ali1122", "ali@ali.com", address, User.Role.client),
                 new User("fateme", "ali1122", "ali@ali.com", address, User.Role.client)
-                );
+        );
 
         User manager=new User("akbar", "akbar1234", "akbar@akbar.com", address, User.Role.manager);
         restaurant=new Restaurant("akbar juje", manager, "kababi", LocalTime.now().minusHours(2),
@@ -55,10 +54,23 @@ public class RestaurantTest {
     }
 
     @Test
+    void addTable_ValidTable_AddsTable() {
+        restaurant.addTable(tables.getLast());
+
+        Assertions.assertTrue(restaurant.getTables().contains(tables.getLast()));
+    }
+
+    @Test
     void getTable_ValidTableNumber_ReturnsCorrectTable() {
         for (Table table:tables)
             restaurant.addTable(table);
-        Assertions.assertEquals(tables.getFirst(), restaurant.getTable(1));
+        Assertions.assertEquals(tables.get(2), restaurant.getTable(3));
+    }
+
+    @Test
+    void addReview_NewUserAddsReview_Correct() {
+        restaurant.addReview(reviews.getFirst());
+        Assertions.assertTrue(restaurant.getReviews().contains(reviews.getFirst()));
     }
 
     @Test
@@ -67,6 +79,7 @@ public class RestaurantTest {
             restaurant.addReview(review);
         int reviewCountBefore=restaurant.getReviews().size();
         restaurant.addReview(reviews.getFirst());
+
         Assertions.assertEquals(reviewCountBefore, restaurant.getReviews().size());
 
         for (var review: restaurant.getReviews())
