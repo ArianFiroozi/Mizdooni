@@ -90,5 +90,9 @@ public class RestaurantTest {
             restaurant.addTable(table);
         Assertions.assertEquals(14, restaurant.getMaxSeatsNumber());
     }
-    //TODO: no tables
+
+    @Test
+    void maxSeats_NoTables_ReturnsZero() {
+        Assertions.assertEquals(0, restaurant.getMaxSeatsNumber());
+    }
 }
