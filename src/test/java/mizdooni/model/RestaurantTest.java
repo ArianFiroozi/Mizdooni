@@ -75,7 +75,7 @@ public class RestaurantTest {
     }
 
     @Test
-    void averageRating_ValidReviews_CalculatesCorrectly() {
+    void getAverageRating_ValidReviews_CalculatesCorrectly() {
         for (Review review:reviews)
             restaurant.addReview(review);
         Assertions.assertEquals(2.4, restaurant.getAverageRating().overall);
@@ -85,14 +85,14 @@ public class RestaurantTest {
     }
 
     @Test
-    void maxSeats_ValidTables_Correct() {
+    void getMaxSeatsNumber_ValidTables_Correct() {
         for (Table table:tables)
             restaurant.addTable(table);
         Assertions.assertEquals(14, restaurant.getMaxSeatsNumber());
     }
 
     @Test
-    void maxSeats_NoTables_ReturnsZero() {
+    void getMaxSeatsNumber_NoTables_ReturnsZero() {
         Assertions.assertEquals(0, restaurant.getMaxSeatsNumber());
     }
 }
