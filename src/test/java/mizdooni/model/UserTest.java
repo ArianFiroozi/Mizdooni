@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Arrays;
 
@@ -38,27 +37,27 @@ public class UserTest {
     }
 
     @Test
-    public void checkPasswordVerifiesPasswordCorrectly() {
+    public void checkPassword_ValidPassword_OnlyVerifiesCorrectPassword() {
         Assertions.assertTrue(client.checkPassword("ali1122"));
         Assertions.assertFalse(client.checkPassword("ali112"));
     }
 
     @Test
-    public void userCanCheckReserveValid() {
+    public void checkReserved_ValidReservation_returnsTrue() {
         client.addReservation(validReservations.getFirst());
 
         Assertions.assertTrue(client.checkReserved(restaurant));
     }
 
     @Test
-    public void userCanNotCheckReserveInFuture() {
+    public void checkReserved_ReservationInFuture_returnsFalse() {
         client.addReservation(invalidReservations.getFirst());
 
         Assertions.assertFalse(client.checkReserved(restaurant));
     }
 
     @Test
-    public void userCanNotCheckCancelledReserve() {
+    public void checkReserved_CancelledReservation_returnsFalse() {
         client.addReservation(validReservations.getFirst());
         validReservations.getFirst().cancel();
 
@@ -66,7 +65,7 @@ public class UserTest {
     }
 
     @Test
-    public void userCanOnlyGetValidReserve() {
+    public void getReservation_ValidReservations_OnlyReturnsActiveReservations() {
         for (Reservation res : validReservations)
             client.addReservation(res);
         for (Reservation res : invalidReservations)

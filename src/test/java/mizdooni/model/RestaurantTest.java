@@ -55,23 +55,27 @@ public class RestaurantTest {
     }
 
     @Test
-    void getTableFindsCorrectTable() {
+    void getTable_ValidTableNumber_ReturnsCorrectTable() {
         for (Table table:tables)
             restaurant.addTable(table);
-        Assertions.assertEquals(restaurant.getTable(1), tables.getFirst());
+        Assertions.assertEquals(tables.getFirst(), restaurant.getTable(1));
     }
 
     @Test
-    void usersCanNotAddMultipleReviews() {
+    void addReview_DuplicatedUser_RemovesPreviousReview() {
         for (Review review:reviews)
             restaurant.addReview(review);
         int reviewCountBefore=restaurant.getReviews().size();
         restaurant.addReview(reviews.getFirst());
         Assertions.assertEquals(reviewCountBefore, restaurant.getReviews().size());
+
+        for (var review: restaurant.getReviews())
+            if (review.getUser()==reviews.getFirst().getUser())
+                Assertions.assertEquals(reviews.getFirst(), review);
     }
 
     @Test
-    void averageRatingIsCorrect() {
+    void averageRating_ValidReviews_CalculatesCorrectly() {
         for (Review review:reviews)
             restaurant.addReview(review);
         Assertions.assertEquals(2.4, restaurant.getAverageRating().overall);
@@ -81,9 +85,10 @@ public class RestaurantTest {
     }
 
     @Test
-    void maxSeatsCorrect() {
+    void maxSeats_ValidTables_Correct() {
         for (Table table:tables)
             restaurant.addTable(table);
         Assertions.assertEquals(14, restaurant.getMaxSeatsNumber());
     }
+    //TODO: no tables
 }

@@ -24,7 +24,7 @@ public class TableTest {
     }
 
     @Test
-    void isReserveValid() {
+    void isReserved_ValidReservations_ReturnsCorrect() {
         table.addReservation(new Reservation(client, restaurant, table, LocalDateTime.now().plusHours(2)));
 
         Assertions.assertTrue(table.isReserved(LocalDateTime.now().plusHours(2)));
@@ -32,7 +32,7 @@ public class TableTest {
     }
 
     @Test
-    void isReservedWithCancelledReservation() {
+    void isReserved_CancelledReservation_ReturnsFalse() {
         Reservation reservation=new Reservation(client, restaurant, table, LocalDateTime.now().plusHours(2));
         table.addReservation(reservation);
         reservation.cancel();
