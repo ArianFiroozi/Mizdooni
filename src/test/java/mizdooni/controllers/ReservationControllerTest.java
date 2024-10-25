@@ -1,5 +1,6 @@
 package mizdooni.controllers;
 
+import static mizdooni.controllers.ControllerUtils.DATETIME_FORMATTER;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
@@ -18,9 +19,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ReservationControllerTest {
 
@@ -151,7 +155,6 @@ public class ReservationControllerTest {
     void getAvailableTimes_reservationServiceThrowsException_throwsException() {
         when(restaurantService.getRestaurant(1)).thenReturn(restaurant);
         LocalDate date=LocalDate.parse("2023-12-25");
-        List<LocalTime> availableTimes = Collections.singletonList(LocalTime.parse("10:01"));
 
         try {
             when(reservationService.getAvailableTimes(1, 1, date)).thenThrow(ResponseException.class);
@@ -163,4 +166,104 @@ public class ReservationControllerTest {
         Assertions.assertThrows(ResponseException.class, ()->reservationController.getAvailableTimes(1, 1, date.toString()));
     }
 
+    @Test
+    void addReservation_validParams_returnsResponse() {
+        Map<String, String> params = new HashMap<>();
+
+        LocalDateTime dateTime = LocalDateTime.parse("2023-10-15 10:01", DATETIME_FORMATTER);
+        params.put("people", "10000");
+        params.put("datetime", "2023-10-15 10:01");
+        when(restaurantService.getRestaurant(1)).thenReturn(restaurant);
+
+        try {
+            when(reservationService.reserveTable(1, 10000, dateTime)).thenReturn(reservation);
+        }
+        catch (Exception e) {
+            fail();
+        }
+        Assertions.assertInstanceOf(Response.class, reservationController.addReservation(1, params));
+    }
+
+    @Test
+    void addReservation_checkRestaurantsThrowsException_throwsException() {
+        Map<String, String> params = new HashMap<>();
+
+        LocalDateTime dateTime = LocalDateTime.parse("2023-10-15 10:01", DATETIME_FORMATTER);
+        params.put("people", "10000");
+        params.put("datetime", "2023-10-15 10:01");
+        when(restaurantService.getRestaurant(1)).thenThrow(ResponseException.class);
+
+        try {
+            when(reservationService.reserveTable(1, 10000, dateTime)).thenReturn(reservation);
+        }
+        catch (Exception e) {
+            fail();
+        }
+        Assertions.assertThrows(ResponseException.class, ()->reservationController.addReservation(1, params));
+    }
+
+    @Test
+    void addReservation_insufficientKeys_throwsException() {
+        Map<String, String> params = new HashMap<>();
+
+        LocalDateTime dateTime = LocalDateTime.parse("2023-10-15 10:01", DATETIME_FORMATTER);
+        params.put("datetime", "2023-10-15 10:01");
+        when(restaurantService.getRestaurant(1)).thenReturn(restaurant);
+
+        try {
+            when(reservationService.reserveTable(1, 10000, dateTime)).thenReturn(reservation);
+        }
+        catch (Exception e) {
+            fail();
+        }
+        Assertions.assertThrows(ResponseException.class, ()->reservationController.addReservation(1, params));
+    }
+
+
+    @Test
+    void addReservation_badDateTimeParam_throwsException() {
+        Map<String, String> params = new HashMap<>();
+
+        LocalDateTime dateTime = LocalDateTime.parse("2023-10-15 10:01", DATETIME_FORMATTER);
+        params.put("people", "10000");
+        params.put("datetime", "2023-20-15 10:01");
+        when(restaurantService.getRestaurant(1)).thenReturn(restaurant);
+
+        try {
+            when(reservationService.reserveTable(1, 10000, dateTime)).thenReturn(reservation);
+        }
+        catch (Exception e) {
+            fail();
+        }
+        Assertions.assertThrows(ResponseException.class, ()->reservationController.addReservation(1, params));
+    }
+
+    @Test
+    void addReservation_reservationServiceThrowsException_throwsException() {
+        Map<String, String> params = new HashMap<>();
+
+        LocalDateTime dateTime = LocalDateTime.parse("2023-10-15 10:01", DATETIME_FORMATTER);
+        params.put("people", "10000");
+        params.put("datetime", "2023-10-15 10:01");
+        when(restaurantService.getRestaurant(1)).thenReturn(restaurant);
+
+        try {
+            when(reservationService.reserveTable(1, 10000, dateTime)).thenThrow(ResponseException.class);
+        }
+        catch (Exception e) {
+            fail();
+        }
+        Assertions.assertThrows(ResponseException.class, ()->reservationController.addReservation(1, params));
+    }
+
+    @Test
+    void cancelReservation_reservationServiceOK_returnsResponse() {
+        Assertions.assertInstanceOf(Response.class, reservationController.cancelReservation(1));
+    }
+
+    @Test
+    void cancelReservation_reservationServiceThrowsException_throwsException() {
+        when(reservationController.cancelReservation(1)).thenThrow(ResponseException.class);
+        Assertions.assertThrows(ResponseException.class, ()->reservationController.cancelReservation(1));
+    }
 }
