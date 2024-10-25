@@ -180,7 +180,7 @@ public class AuthenticationControllerTest {
         when(userService.emailExists("email@ali.com")).thenReturn(true);
         Assertions.assertThrows(ResponseException.class, ()->{ac.validateUsername("email@ali.com");});
     }
-    
+
     @Test
     void validateEmail_badEmailFormat_throwsException() {
         Assertions.assertThrows(ResponseException.class, ()->{ac.validateUsername("emaile ali");});
