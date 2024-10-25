@@ -10,13 +10,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.mockito.Mockito.when;
 
 public class AuthenticationControllerTest {
 
     @Mock
     UserService userService;
-
     @Mock
     User user;
 
@@ -29,7 +32,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    void user_nullUser_returnsException() {
+    void user_nullUser_throwsException() {
         when(userService.getCurrentUser()).thenReturn(null);
         Assertions.assertThrows(ResponseException.class, ac::user);
     }
@@ -38,5 +41,106 @@ public class AuthenticationControllerTest {
     void user_mockUser_returnsResponse() {
         when(userService.getCurrentUser()).thenReturn(user);
         Assertions.assertInstanceOf(Response.class, ac.user());
+    }
+
+    @Test
+    void login_loginSuccessful_returnsResponse() {
+        Map<String, String> params = new HashMap<>();
+        params.put("username", "ali");
+        params.put("password", "ramze ali");
+
+        when(userService.login("ali", "ramze ali")).thenReturn(true);
+        when(userService.getCurrentUser()).thenReturn(user);
+
+        Assertions.assertInstanceOf(Response.class, ac.login(params));
+    }
+
+    @Test
+    void login_insufficientParams_throwsException() {
+        Map<String, String> params = new HashMap<>();
+        params.put("username", "ali");
+
+        when(userService.login("ali", "ramze ali")).thenReturn(true);
+        when(userService.getCurrentUser()).thenReturn(user);
+
+        Assertions.assertThrows(ResponseException.class, ()->{ac.login(params);});
+    }
+
+    @Test
+    void login_userNotFound_throwsException() {
+        Map<String, String> params = new HashMap<>();
+        params.put("username", "ali");
+        params.put("password", "ramze ali");
+
+        when(userService.login("ali", "ramze ali")).thenReturn(false);
+        when(userService.getCurrentUser()).thenReturn(user);
+
+        Assertions.assertThrows(ResponseException.class, ()->{ac.login(params);});
+    }
+
+    @Test
+    void signup_correctParams_returnsResponse() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "ali");
+        params.put("password", "ramze ali");
+        params.put("email", "emaile ali");
+        Map<String, String> address = new HashMap<>();
+        address.put("country", "home");
+        address.put("city", "home");
+        params.put("address", address);
+        params.put("role", "client");
+        when(userService.login("ali", "ramze ali")).thenReturn(true);
+
+        Assertions.assertInstanceOf(Response.class, ac.signup(params));
+    }
+
+    @Test
+    void signup_insufficientParams_throwsException() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "ali");
+
+        Assertions.assertThrows(ResponseException.class, ()->{ac.signup(params);});
+    }
+
+    @Test
+    void signup_wrongParamFormat_throwsException() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "ali");
+        params.put("password", "ramze ali");
+        params.put("email", "emaile ali");
+        params.put("address", "khoone ali");
+        params.put("role", "client");
+
+        Assertions.assertThrows(ResponseException.class, ()->{ac.signup(params);});
+    }
+
+    @Test
+    void signup_partiallyWrongAddress_throwsException() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "ali");
+        params.put("password", "ramze ali");
+        params.put("email", "emaile ali");
+        Map<String, String> address = new HashMap<>();
+        address.put("country", "home");
+        params.put("address", address);
+        params.put("role", "client");
+
+        Assertions.assertThrows(ResponseException.class, ()->{ac.signup(params);});
+    }
+
+    @Test
+    void signup_loginThrowsException_throwsException() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "ali");
+        params.put("password", "ramze ali");
+        params.put("email", "emaile ali");
+        Map<String, String> address = new HashMap<>();
+        address.put("country", "home");
+        address.put("city", "home");
+        params.put("address", address);
+        params.put("role", "client");
+        when(userService.login("ali", "ramze ali")).thenThrow(NullPointerException.class);
+
+        Assertions.assertThrows(ResponseException.class, ()->{ac.signup(params);});
     }
 }
