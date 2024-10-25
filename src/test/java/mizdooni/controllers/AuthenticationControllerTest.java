@@ -83,7 +83,7 @@ public class AuthenticationControllerTest {
         Map<String, Object> params = new HashMap<>();
         params.put("username", "ali");
         params.put("password", "ramze ali");
-        params.put("email", "emaile ali");
+        params.put("email", "email@ali.com");
         Map<String, String> address = new HashMap<>();
         address.put("country", "home");
         address.put("city", "home");
@@ -107,7 +107,7 @@ public class AuthenticationControllerTest {
         Map<String, Object> params = new HashMap<>();
         params.put("username", "ali");
         params.put("password", "ramze ali");
-        params.put("email", "emaile ali");
+        params.put("email", "email@ali.com");
         params.put("address", "khoone ali");
         params.put("role", "client");
 
@@ -119,7 +119,7 @@ public class AuthenticationControllerTest {
         Map<String, Object> params = new HashMap<>();
         params.put("username", "ali");
         params.put("password", "ramze ali");
-        params.put("email", "emaile ali");
+        params.put("email", "email@ali.com");
         Map<String, String> address = new HashMap<>();
         address.put("country", "home");
         params.put("address", address);
@@ -133,7 +133,7 @@ public class AuthenticationControllerTest {
         Map<String, Object> params = new HashMap<>();
         params.put("username", "ali");
         params.put("password", "ramze ali");
-        params.put("email", "emaile ali");
+        params.put("email", "email@ali.com");
         Map<String, String> address = new HashMap<>();
         address.put("country", "home");
         address.put("city", "home");
@@ -142,5 +142,47 @@ public class AuthenticationControllerTest {
         when(userService.login("ali", "ramze ali")).thenThrow(NullPointerException.class);
 
         Assertions.assertThrows(ResponseException.class, ()->{ac.signup(params);});
+    }
+
+    @Test
+    void logout_userServiceLogoutTrue_returnsResponse() {
+        when(userService.logout()).thenReturn(true);
+        Assertions.assertInstanceOf(Response.class, ac.logout());
+    }
+
+    @Test
+    void logout_userServiceLogoutFalse_throwsException() {
+        when(userService.logout()).thenReturn(false);
+        Assertions.assertThrows(ResponseException.class, ()->{ac.logout();});
+    }
+
+    @Test
+    void validateUsername_userNameOK_returnsResponse() {
+        when(userService.usernameExists("ali")).thenReturn(false);
+        Assertions.assertInstanceOf(Response.class, ac.validateUsername("ali"));
+    }
+
+    @Test
+    void validateUsername_userNameExists_throwsException() {
+        when(userService.usernameExists("ali")).thenReturn(true);
+        Assertions.assertThrows(ResponseException.class, ()->{ac.validateUsername("ali");});
+    }
+
+
+    @Test
+    void validateEmail_emailOK_returnsResponse() {
+        when(userService.emailExists("email@ali.com")).thenReturn(false);
+        Assertions.assertInstanceOf(Response.class, ac.validateEmail("email@ali.com"));
+    }
+
+    @Test
+    void validateEmail_emailExists_throwsException() {
+        when(userService.emailExists("email@ali.com")).thenReturn(true);
+        Assertions.assertThrows(ResponseException.class, ()->{ac.validateUsername("email@ali.com");});
+    }
+    
+    @Test
+    void validateEmail_badEmailFormat_throwsException() {
+        Assertions.assertThrows(ResponseException.class, ()->{ac.validateUsername("emaile ali");});
     }
 }
