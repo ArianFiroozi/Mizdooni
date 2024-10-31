@@ -1,7 +1,6 @@
 package mizdooni.controllers;
 
 import static mizdooni.controllers.ControllerUtils.DATETIME_FORMATTER;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,7 +51,10 @@ public class ReservationControllerTest {
     @Test
     void getReservations_validParams_returnsResponse() {
         when(restaurantService.getRestaurant(1)).thenReturn(restaurant);
-        Assertions.assertInstanceOf(Response.class, reservationController.getReservations(1, 1, "2023-10-25"));
+
+        Response response = reservationController.getReservations(1, 1, "2023-10-25");
+        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatus().value());
+        Assertions.assertEquals("restaurant table reservations", response.getMessage());
     }
 
     @Test
@@ -88,7 +91,10 @@ public class ReservationControllerTest {
         catch (Exception e) {
             fail();
         }
-        Assertions.assertInstanceOf(Response.class, reservationController.getCustomerReservations(1));
+
+        Response response = reservationController.getCustomerReservations(1);
+        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatus().value());
+        Assertions.assertEquals("user reservations", response.getMessage());
     }
 
     @Test
@@ -115,7 +121,9 @@ public class ReservationControllerTest {
             fail();
         }
 
-        assertInstanceOf(Response.class, reservationController.getAvailableTimes(1, 1, date.toString()));
+        Response response = reservationController.getAvailableTimes(1, 1, date.toString());
+        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatus().value());
+        Assertions.assertEquals("available times", response.getMessage());
     }
 
 
@@ -181,7 +189,10 @@ public class ReservationControllerTest {
         catch (Exception e) {
             fail();
         }
-        Assertions.assertInstanceOf(Response.class, reservationController.addReservation(1, params));
+
+        Response response = reservationController.addReservation(1, params);
+        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatus().value());
+        Assertions.assertEquals("reservation done", response.getMessage());
     }
 
     @Test
@@ -258,7 +269,9 @@ public class ReservationControllerTest {
 
     @Test
     void cancelReservation_reservationServiceOK_returnsResponse() {
-        Assertions.assertInstanceOf(Response.class, reservationController.cancelReservation(1));
+        Response response = reservationController.cancelReservation(1);
+        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatus().value());
+        Assertions.assertEquals("reservation cancelled", response.getMessage());
     }
 
     @Test

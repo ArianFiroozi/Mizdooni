@@ -4,7 +4,6 @@ import mizdooni.exceptions.*;
 import mizdooni.model.Rating;
 import mizdooni.model.Restaurant;
 import mizdooni.model.Review;
-import mizdooni.response.PagedList;
 import mizdooni.response.Response;
 import mizdooni.response.ResponseException;
 import mizdooni.service.RestaurantService;
@@ -17,8 +16,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +49,11 @@ class ReviewControllerTest {
     @Test
     void getReviews_validParams_returnsResponse() {
         when(restaurantService.getRestaurant(1)).thenReturn(restaurant);
-        Assertions.assertInstanceOf(Response.class, reviewController.getReviews(1, 1));
+
+        String message = "reviews for restaurant (" + 1 + "): " + restaurant.getName();
+        Response response = reviewController.getReviews(1, 1);
+        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatus().value());
+        Assertions.assertEquals(message, response.getMessage());
     }
 
     @Test
