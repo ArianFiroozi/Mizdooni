@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static mizdooni.controllers.ControllerUtils.PARAMS_BAD_TYPE;
 import static mizdooni.controllers.ControllerUtils.PARAMS_MISSING;
@@ -58,6 +59,12 @@ public class AuthenticationController {
             username = (String) params.get("username");
             password = (String) params.get("password");
             email = (String) params.get("email");
+
+            // Email format validation
+            if (!isValidEmail(email)) {
+                throw new ResponseException(HttpStatus.BAD_REQUEST, "Invalid email format");
+            }
+
             role = User.Role.valueOf((String) params.get("role"));
             Map<String, String> addr = (Map<String, String>) params.get("address");
             address = new Address(addr.get("country"), addr.get("city"), addr.get("street")); //city was null. bug fixed
@@ -76,6 +83,13 @@ public class AuthenticationController {
         } catch (Exception ex) {
             throw new ResponseException(HttpStatus.BAD_REQUEST, ex);
         }
+    }
+
+    //check email validation added
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        return pattern.matcher(email).matches();
     }
 
     @PostMapping("/logout")

@@ -152,9 +152,28 @@ public class AuthenticationControllerTest {
         Map<String, String> address = new HashMap<>();
         address.put("country", "home");
         address.put("city", "home");
+        address.put("street", "home");
         params.put("address", address);
         params.put("role", "client");
         when(userService.login("ali", "ramze ali")).thenThrow(NullPointerException.class);
+
+        Assertions.assertThrows(ResponseException.class, ()->{
+            authenticationController.signup(params);});
+    }
+
+    @Test
+    void signup_wrongEmailFormat_throwsException() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "ali");
+        params.put("password", "ramze ali");
+        params.put("email", "email.ali.com");
+        Map<String, String> address = new HashMap<>();
+        address.put("country", "home");
+        address.put("city", "home");
+        address.put("street", "home");
+        params.put("address", address);
+        params.put("role", "client");
+        when(userService.login("ali", "ramze ali")).thenReturn(true);
 
         Assertions.assertThrows(ResponseException.class, ()->{
             authenticationController.signup(params);});
