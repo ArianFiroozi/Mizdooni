@@ -96,6 +96,7 @@ public class AuthenticationControllerTest {
         Map<String, String> address = new HashMap<>();
         address.put("country", "home");
         address.put("city", "home");
+        address.put("street", "home");
         params.put("address", address);
         params.put("role", "client");
         when(userService.login("ali", "ramze ali")).thenReturn(true);

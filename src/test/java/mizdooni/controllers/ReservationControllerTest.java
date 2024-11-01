@@ -70,6 +70,12 @@ public class ReservationControllerTest {
     }
 
     @Test
+    void getReservations_nullDate_returnsResponse() {
+        when(restaurantService.getRestaurant(1)).thenReturn(restaurant);
+        Assertions.assertInstanceOf(Response.class, reservationController.getReservations(1, 1, null));
+    }
+
+    @Test
     void getReservations_reservationServiceThrowsException_throwsException() {
         when(restaurantService.getRestaurant(1)).thenReturn(null);
         try {
