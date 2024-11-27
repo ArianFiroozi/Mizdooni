@@ -42,6 +42,7 @@ class TableController {
 
         int seatsNumber;
         try {
+            // bug: first key(seatsNumber) is plural but this one was singular
             seatsNumber = Integer.parseInt(params.get("seatsNumber"));
         } catch (Exception ex) {
             throw new ResponseException(HttpStatus.BAD_REQUEST, PARAMS_BAD_TYPE);
