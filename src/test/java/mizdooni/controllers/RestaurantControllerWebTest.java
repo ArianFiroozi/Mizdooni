@@ -4,6 +4,7 @@ import mizdooni.model.Address;
 import mizdooni.model.Restaurant;
 import mizdooni.model.User;
 import mizdooni.service.RestaurantService;
+import mizdooni.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,6 +32,8 @@ class RestaurantControllerWebTest {
 
     @MockBean
     private RestaurantService restaurantService;
+    @MockBean
+    private UserService userService;
 
     @Test
     void testGetRestaurant() throws Exception {
