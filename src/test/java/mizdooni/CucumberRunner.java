@@ -6,7 +6,10 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = {"classpath:features/UserAddReservation.feature", "classpath:features/RestaurantGetAverageRating.feature"},
+        features = {"classpath:features/UserAddReservation.feature",
+                    "classpath:features/RestaurantGetAverageRating.feature",
+                    "classpath:features/RestaurantAddReview.feature"
+                    },
         glue = "mizdooni.StepDefs",
         publish = true
 )
