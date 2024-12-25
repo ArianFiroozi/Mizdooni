@@ -5,19 +5,16 @@ import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import io.cucumber.spring.CucumberContextConfiguration;
 import mizdooni.model.*;
-import org.junit.jupiter.api.Assertions;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @CucumberContextConfiguration
 @SpringBootTest()
-public class ExampleStepDef {
+public class UserAddReservationStepDef {
 
     private User client;
     private Restaurant restaurant;

@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = "classpath:features/test.feature",
+        features = "classpath:features/UserAddReservation.feature",
         glue = "mizdooni.StepDefs",
 //        plugin = {"pretty", "html:target/cucumber-html-report"},
 //        tags = "@OnlyOneTime",
