@@ -1,3 +1,6 @@
+# Software Test Course Project
+Each homework is in a separate branch
+
 # Sample API Requests
 
 - [Sample API Requests](#sample-api-requests)
